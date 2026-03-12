@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">workout_journal</string>
+    <string name="workout_journal">Workout Journal</string>
 </resources>
