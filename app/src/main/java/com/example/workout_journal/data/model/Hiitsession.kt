@@ -22,5 +22,6 @@ data class HiitSession(
     val totalTime: Float,
     val timePerRound: Float,
     val restAfterRound: Float,
+    val restAfterSet: Float,
     val exercises: List<String>
 )

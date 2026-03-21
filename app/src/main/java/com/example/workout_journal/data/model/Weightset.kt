@@ -30,6 +30,7 @@ data class WeightSet(
     @ColumnInfo(index = true) val exerciseId: Int,
     val setNumber: Int,
     val numReps: Int,
+    val weight: Float,
     val setType: String,
     val notes: String? = null
 )

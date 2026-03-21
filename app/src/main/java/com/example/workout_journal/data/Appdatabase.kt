@@ -8,15 +8,21 @@ import androidx.room.TypeConverters
 import com.example.workout_journal.data.dao.HiitExerciseDao
 import com.example.workout_journal.data.dao.HiitSessionDao
 import com.example.workout_journal.data.dao.RunningDao
+import com.example.workout_journal.data.dao.RunningPrDao
 import com.example.workout_journal.data.dao.RunningSplitDao
+import com.example.workout_journal.data.dao.UserProfileDao
 import com.example.workout_journal.data.dao.WeightExerciseDao
+import com.example.workout_journal.data.dao.WeightPrDao
 import com.example.workout_journal.data.dao.WeightSetDao
 import com.example.workout_journal.data.dao.WorkoutDao
 import com.example.workout_journal.data.model.HiitExercise
 import com.example.workout_journal.data.model.HiitSession
 import com.example.workout_journal.data.model.Running
+import com.example.workout_journal.data.model.RunningPr
 import com.example.workout_journal.data.model.RunningSplit
+import com.example.workout_journal.data.model.UserProfile
 import com.example.workout_journal.data.model.WeightExercise
+import com.example.workout_journal.data.model.WeightPr
 import com.example.workout_journal.data.model.WeightSet
 import com.example.workout_journal.data.model.Workout
 
@@ -28,7 +34,10 @@ import com.example.workout_journal.data.model.Workout
         HiitSession::class,
         HiitExercise::class,
         WeightSet::class,
-        WeightExercise::class
+        WeightExercise::class,
+        UserProfile::class,
+        WeightPr::class,
+        RunningPr::class
     ],
     version = 1,
     exportSchema = false
@@ -43,6 +52,9 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun hiitExerciseDao(): HiitExerciseDao
     abstract fun weightSetDao(): WeightSetDao
     abstract fun weightExerciseDao(): WeightExerciseDao
+    abstract fun userProfileDao(): UserProfileDao
+    abstract fun weightPrDao(): WeightPrDao
+    abstract fun runningPrDao(): RunningPrDao
 
     companion object {
         @Volatile
