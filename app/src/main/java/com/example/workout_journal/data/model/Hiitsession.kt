@@ -23,5 +23,6 @@ data class HiitSession(
     val timePerRound: Float,
     val restAfterRound: Float,
     val restAfterSet: Float,
-    val exercises: List<String>
+    val exercises: List<String>,
+    val notes: String? = null
 )

@@ -21,7 +21,8 @@ data class Running(
     val activeTime: Float,
     val distanceTravelled: Float,
     val elevationGain: Float,
-    val notes: String? = null
+    val notes: String? = null,
+    val title: String? = null,
 )
 
 
