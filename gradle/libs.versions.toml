@@ -10,7 +10,7 @@ kotlin = "2.2.10"
 composeBom = "2024.09.00"
 foundationLayout = "1.10.3"
 foundation = "1.10.3"
-room = "2.6.1"
+room = "2.7.0-alpha11"
 ksp = "2.3.2"
 gson = "2.13.2"
 
