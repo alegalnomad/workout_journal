@@ -11,7 +11,7 @@ data class WorkoutWithWeightExercises(
     @Embedded val workout: Workout,
     @Relation(
         parentColumn = "id",
-        entityColumn = "workout_id",
+        entityColumn = "workoutId",
         entity = WeightExercise::class
     )
     val exercises: List<WeightExerciseWithSets>
@@ -22,7 +22,7 @@ data class WeightExerciseWithSets(
     @Embedded val exercise: WeightExercise,
 
     @Relation(
-        parentColumn = "exercise_name_id",
+        parentColumn = "exerciseNameId",
         entityColumn = "id",
         entity = WeightExerciseName::class
     )
@@ -31,7 +31,7 @@ data class WeightExerciseWithSets(
 
     @Relation(
         parentColumn = "id",
-        entityColumn = "weight_exercise_id",
+        entityColumn = "weightExerciseId",
         entity = WeightSet::class
     )
     val sets: List<WeightSet>

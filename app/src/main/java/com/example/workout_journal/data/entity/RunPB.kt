@@ -6,28 +6,29 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "run_pb",
+    tableName = "runPB",
     foreignKeys = [
         ForeignKey(
             entity = Run::class,
             parentColumns = ["id"],
-            childColumns = ["run_id"],
+            childColumns = ["runId"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = Workout::class,
             parentColumns = ["id"],
-            childColumns = ["workout_id"],
+            childColumns = ["workoutId"],
             onDelete = ForeignKey.CASCADE
         )
 ],
-    indices = [Index("run_id"), Index("workout_id")]
+    indices = [Index("runId"), Index("workoutId")]
 
         )
 data class RunPB(
-    @PrimaryKey(autoGenerate = true) val id : Int =0,
-    val run_id : Int,
-    val workout_id : Int,
+    @PrimaryKey(autoGenerate = true) val id : Long =0,
+    val runId : Long,
+    val workoutId : Long,
     val distance : RunDistance,
-    val time_elapsed : Long,
+    val timeElapsed : Long,
+    val dateCreated : Long = System.currentTimeMillis()
 )

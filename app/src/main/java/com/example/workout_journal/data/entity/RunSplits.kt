@@ -11,18 +11,18 @@ import androidx.room.PrimaryKey
         ForeignKey(
             entity = Run::class,
             parentColumns = ["id"],
-            childColumns = ["run_id"],
+            childColumns = ["runId"],
             onDelete = ForeignKey.CASCADE
         )
 ],
-    indices = [Index("run_id")]
+    indices = [Index("runId")]
 
 )
 data class RunSplits(
-    @PrimaryKey(autoGenerate = true) val id : Int =0,
-    val run_id : Int,
-    val distance : Float,
-    val split_time : Long,
-    val elevation_gain : Float,
+    @PrimaryKey(autoGenerate = true) val id : Long =0,
+    val runId : Long,
+    val distance : Int,
+    val splitTime : Long,
+    val elevationGain : Float,
 
     )

@@ -11,23 +11,24 @@ import androidx.room.PrimaryKey
         ForeignKey(
             entity = WeightExerciseName::class,
             parentColumns = ["id"],
-            childColumns = ["exercise_name_id"],
+            childColumns = ["exerciseNameId"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = WeightExercise::class,
             parentColumns = ["id"],
-            childColumns = ["weight_exercise_id"]
+            childColumns = ["weightExerciseId"],
+            onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index("exercise_name_id"), Index(value=["exercise_name_id","best_weight_kg"]), Index("weight_exercise_id")]
+    indices = [Index("exerciseNameId"), Index(value=["exerciseNameId","bestWeightKg"]), Index("weightExerciseId")]
 
 )
 data class WeightPB(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val exercise_name_id : Int,
-    val weight_exercise_id : Int,
-    val best_weight_kg : Float,
-    val date_achieved : Long = System.currentTimeMillis()
+    val exerciseNameId : Int,
+    val weightExerciseId : Long,
+    val bestWeightKg : Float,
+    val dateAchieved : Long = System.currentTimeMillis()
 )
 

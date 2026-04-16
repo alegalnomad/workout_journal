@@ -6,22 +6,22 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "weight_set",
+    tableName = "weightSet",
     foreignKeys = [
         ForeignKey(
             entity = WeightExercise::class,
             parentColumns = ["id"],
-            childColumns = ["weight_exercise_id"],
+            childColumns = ["weightExerciseId"],
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index("weight_exercise_id")]
+    indices = [Index("weightExerciseId")]
 )
 data class WeightSet(
     @PrimaryKey(autoGenerate = true) val id : Int =0,
-    val weight_exercise_id: Int,
+    val weightExerciseId: Int,
     val set : Int,
     val reps : Int,
-    val weight_kg : Float,
+    val weightKg : Float,
     val setType: SetType
     )

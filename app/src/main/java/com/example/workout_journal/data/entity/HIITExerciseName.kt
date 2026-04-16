@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "hiit_exercise_name",
+    tableName = "hiitExerciseNames",
 )
 data class HIITExerciseName(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,

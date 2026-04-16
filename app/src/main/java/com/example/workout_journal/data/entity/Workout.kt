@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "workout")
 data class Workout(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val WorkoutType: WorkoutType,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val workoutType: WorkoutType,
     val dateCreated: Long = System.currentTimeMillis(),
 )

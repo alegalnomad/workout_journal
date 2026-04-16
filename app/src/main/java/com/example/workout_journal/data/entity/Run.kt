@@ -11,20 +11,20 @@ import androidx.room.PrimaryKey
         ForeignKey(
             entity = Workout::class,
             parentColumns = ["id"],
-            childColumns = ["workout_id"],
+            childColumns = ["workoutId"],
             onDelete = ForeignKey.CASCADE
         )
             ],
-    indices = [Index("workout_id")]
+    indices = [Index("workoutId")]
 )
 data class Run(
-    @PrimaryKey(autoGenerate = true) val id : Int =0,
-    val workout_id : Int,
+    @PrimaryKey(autoGenerate = true) val id : Long =0,
+    val workoutId : Long,
     val title : String,
     val distance : Float,
-    val time_elapsed : Long,
-    val active_time: Long,
-    val elevation_gain : Float,
+    val timeElapsed : Long,
+    val activeTime: Long,
+    val elevationGain : Float,
     val notes : String,
-    val img_path: String,
+    val imgPath: String,
 )
