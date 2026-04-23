@@ -4,6 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import com.example.workout_journal.data.entity.WeightExercise
 import com.example.workout_journal.data.entity.WeightExerciseName
+import com.example.workout_journal.data.entity.WeightPB
 import com.example.workout_journal.data.entity.WeightSet
 import com.example.workout_journal.data.entity.Workout
 
@@ -35,4 +36,16 @@ data class WeightExerciseWithSets(
         entity = WeightSet::class
     )
     val sets: List<WeightSet>
+)
+
+data class WeightPbWithNames(
+    @Embedded val pb: WeightPB,
+
+    @Relation(
+        parentColumn = "exerciseNameId",
+        entityColumn = "id",
+        entity = WeightExerciseName::class
+    )
+    val exerciseName: WeightExerciseName
+
 )

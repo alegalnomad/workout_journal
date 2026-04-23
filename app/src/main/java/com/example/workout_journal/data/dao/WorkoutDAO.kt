@@ -7,7 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.example.workout_journal.data.entity.Workout
 import com.example.workout_journal.data.entity.WorkoutType
-import com.example.workout_journal.data.relations.HIITWithExercises
+import com.example.workout_journal.data.relations.WorkoutWithHIIT
 import com.example.workout_journal.data.relations.WorkoutWithRunning
 import com.example.workout_journal.data.relations.WorkoutWithWeightExercises
 import kotlinx.coroutines.flow.Flow
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface WorkoutDAO{
     @Insert
-    suspend fun insertWorkout(workout: Workout)
+    suspend fun insertWorkout(workout: Workout): Long
 
     @Delete
     suspend fun deleteWorkout(workout: Workout)
@@ -35,6 +35,19 @@ interface WorkoutDAO{
 
     @Transaction
     @Query("SELECT * FROM workout WHERE workoutType = 'HIIT' ORDER BY dateCreated DESC")
-    fun getWorkoutsWithHiit(): Flow<List<HIITWithExercises>>
+    fun getWorkoutsWithHiit(): Flow<List<WorkoutWithHIIT>>
+
+    @Transaction
+    @Query("SELECT * FROM workout WHERE id = :id")
+    fun getWorkoutWithWeightExercises(id: Long): Flow<WorkoutWithWeightExercises>
+
+    @Transaction
+    @Query("SELECT * FROM workout WHERE id = :id")
+    fun getWorkoutWithRunning(id: Long): Flow<WorkoutWithRunning>
+
+    @Transaction
+    @Query("SELECT * FROM workout WHERE id = :id")
+    fun getWorkoutWithHIIT(id: Long): Flow<WorkoutWithHIIT>
+
 
 }

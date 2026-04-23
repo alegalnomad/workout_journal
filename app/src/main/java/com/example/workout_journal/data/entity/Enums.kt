@@ -5,13 +5,12 @@ enum class WorkoutType { WEIGHTS, RUN, HIIT }
 enum class SetType { WORKING, WARMUP, DROP, FAILURE }
 
 enum class RunDistance(val km: Int) {
-    ONE_KM(1),
-    FIVE_KM(5),
-    TEN_KM(10),
-    HALF_MARATHON(21),
-    FULL_MARATHON(42),
+    ONE_KM(1_000),
+    FIVE_KM(5_000),
+    TEN_KM(10_000),
+    HALF_MARATHON(21_097),
+    FULL_MARATHON(42_195),
     LONGEST_RUN(0)
 }
 
-enum class DistanceUnit { KM, MILE }
-enum class WeightUnit { KG, POUNDS}
+enum class MeasureUnit { METRIC, IMPERIAL }

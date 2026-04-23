@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "body_height_weight")
 data class BodyHeightWeight(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val bodyHeight: Float,
-    val bodyWeight: Float,
+    val bodyHeightMeters: Double,
+    val bodyWeightKg: Double,
     val dateCreated: Long = System.currentTimeMillis(),
 )

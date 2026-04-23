@@ -6,7 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "hiitRounds",
+    tableName = "hiitSession",
     foreignKeys = [
         ForeignKey(
             entity = Workout::class,
@@ -17,7 +17,7 @@ import androidx.room.PrimaryKey
     ],
     indices = [Index("workoutId")]
 )
-data class HIITRounds(
+data class HIITSession(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val workoutId: Long,
     val rounds: Int,

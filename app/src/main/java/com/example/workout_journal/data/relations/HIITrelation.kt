@@ -4,28 +4,32 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import com.example.workout_journal.data.entity.HIITExercise
 import com.example.workout_journal.data.entity.HIITExerciseName
-import com.example.workout_journal.data.entity.HIITRounds
+import com.example.workout_journal.data.entity.HIITSession
 import com.example.workout_journal.data.entity.Workout
 
-data class HIITWithExercises(
+data class WorkoutWithHIIT(
     @Embedded val workout: Workout,
 
     @Relation(
         parentColumn = "id",
         entityColumn = "workoutId",
-        entity = HIITRounds::class
+        entity = HIITSession::class
     )
-    val config: HIITRounds,
+    val config: HIITRoundsWithExercises
+)
+
+data class HIITRoundsWithExercises(
+    @Embedded val rounds: HIITSession,
 
     @Relation(
         parentColumn = "id",
-        entityColumn = "workoutId",
+        entityColumn = "sessionId",
         entity = HIITExercise::class
     )
-    val exercises: List<HIITExerciseWithName>
+    val exercises: List<HIITRoundsExerciseWithName>
 )
 
-data class HIITExerciseWithName(
+data class HIITRoundsExerciseWithName(
     @Embedded val exercise: HIITExercise,
 
     @Relation(
@@ -33,8 +37,7 @@ data class HIITExerciseWithName(
         entityColumn = "id",
         entity = HIITExerciseName::class
     )
-    val exerciseName: HIITExerciseName,
-
+    val exerciseName: HIITExerciseName
 )
 
 

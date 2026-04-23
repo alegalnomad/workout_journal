@@ -6,7 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "run_splits",
+    tableName = "runSplits",
     foreignKeys = [
         ForeignKey(
             entity = Run::class,
@@ -21,8 +21,8 @@ import androidx.room.PrimaryKey
 data class RunSplits(
     @PrimaryKey(autoGenerate = true) val id : Long =0,
     val runId : Long,
-    val distance : Int,
+    val splitIndex : Int,
     val splitTime : Long,
-    val elevationGain : Float,
-
+    val elevationGain : Double,
+    val elevationalLoss : Double,
     )

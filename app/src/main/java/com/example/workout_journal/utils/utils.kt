@@ -1,18 +1,13 @@
 package com.example.workout_journal.utils
 
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+fun formatElapsedTime(millis: Long): String {
+    val seconds = (millis / 1000) % 60
+    val minutes = (millis / (1000 * 60)) % 60
+    val hours = (millis / (1000 * 60 * 60))
 
-fun formatDate(timestamp: Long): String {
-    val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-    return sdf.format(Date(timestamp))
-}
-
-fun convertWeight(value: Float, unit: String): Float {
-    return if (unit == "lbs") value * 2.20462f else value
-}
-
-fun convertDistance(value: Float, unit: String): Float {
-    return if (unit == "mi") value * 0.621371f else value
+    return if (hours > 0) {
+        "%02d:%02d:%02d".format(hours, minutes, seconds)
+    } else {
+        "%02d:%02d".format(minutes, seconds)
+    }
 }

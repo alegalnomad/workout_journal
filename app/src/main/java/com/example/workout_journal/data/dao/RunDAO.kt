@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface RunDAO {
     @Insert
-    suspend fun insertRun(run: Run)
+    suspend fun insertRun(run: Run): Long
 
     @Delete
     suspend fun deleteRun(run: Run)
@@ -21,4 +21,10 @@ interface RunDAO {
     @Transaction
     @Query("SELECT * FROM run WHERE id = :runId")
     fun getRunWithSplits(runId: Long): Flow<RunWithSplits>
+
+    @Query("SELECT * FROM run ORDER BY timeElapsed ASC")
+    fun getAllRuns(): Flow<List<Run>>
+
+    @Query("SELECT * FROM run WHERE workoutId = :workoutId")
+    suspend fun getByWorkout(workoutId: Long): Run?
 }

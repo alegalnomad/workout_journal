@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface WeightExerciseNameDAO {
     @Insert
-    suspend fun insertWeightExerciseName(weightExerciseName: WeightExerciseName)
+    suspend fun insertWeightExerciseName(weightExerciseName: WeightExerciseName): Long
 
     @Delete
     suspend fun deleteWeightExerciseName(name: WeightExerciseName)

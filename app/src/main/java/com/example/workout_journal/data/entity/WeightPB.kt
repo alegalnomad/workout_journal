@@ -21,14 +21,14 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index("exerciseNameId"), Index(value=["exerciseNameId","bestWeightKg"]), Index("weightExerciseId")]
+    indices = [Index("exerciseNameId"), Index(value=["exerciseNameId","weightKg"]), Index("weightExerciseId")]
 
 )
 data class WeightPB(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val exerciseNameId : Int,
     val weightExerciseId : Long,
-    val bestWeightKg : Float,
+    val weightKg : Double,
     val dateAchieved : Long = System.currentTimeMillis()
 )
 

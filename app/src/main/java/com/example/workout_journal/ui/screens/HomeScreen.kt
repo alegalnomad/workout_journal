@@ -1,206 +1,206 @@
 package com.example.workout_journal.ui.screens
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.BottomAppBar
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.PrimaryTabRow
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.workout_journal.R
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.workout_journal.data.entity.HIITExercise
+import com.example.workout_journal.data.entity.HIITExerciseName
+import com.example.workout_journal.data.entity.HIITSession
+import com.example.workout_journal.data.entity.Run
+import com.example.workout_journal.data.entity.SetType
+import com.example.workout_journal.data.entity.WeightExercise
+import com.example.workout_journal.data.entity.WeightExerciseName
+import com.example.workout_journal.data.entity.WeightSet
+import com.example.workout_journal.data.entity.Workout
+import com.example.workout_journal.data.entity.WorkoutType
+import com.example.workout_journal.data.relations.HIITRoundsExerciseWithName
+import com.example.workout_journal.data.relations.HIITRoundsWithExercises
+import com.example.workout_journal.data.relations.WeightExerciseWithSets
+import com.example.workout_journal.data.relations.WorkoutWithHIIT
+import com.example.workout_journal.data.relations.WorkoutWithRunning
+import com.example.workout_journal.data.relations.WorkoutWithWeightExercises
+import com.example.workout_journal.ui.HomeScreenContent
+import com.example.workout_journal.ui.cards.HIITWorkoutCard
+import com.example.workout_journal.ui.cards.RunWorkoutCard
+import com.example.workout_journal.ui.cards.WeightWorkoutCard
 import com.example.workout_journal.ui.theme.Workout_journalTheme
-import java.time.LocalDate
-import java.time.YearMonth
-import java.time.format.TextStyle
-import java.util.Locale
+import com.example.workout_journal.ui.viewmodel.HomeViewModel
+import com.example.workout_journal.ui.viewmodel.WorkoutsWithType
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
-
-    var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    var currentMonth by remember { mutableStateOf(YearMonth.now()) }
-
-
-    val highlightedDates = remember {
-        setOf(
-            LocalDate.now(),
-            LocalDate.now().plusDays(2),
-            LocalDate.now().minusDays(3)
-        )
-    }
-
-    val tabs = listOf("Home", "Profile")
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.workout_journal)) },
-                modifier = Modifier.fillMaxWidth(),
-            )
-        },
-
-    ){ contentPadding ->
-        Column(modifier = Modifier.padding(contentPadding)){}
-    }
+fun HomeScreen(
+    viewModel: HomeViewModel,
+    onWorkoutSelect: (Long, WorkoutType) -> Unit,
+) {
+    val workouts by viewModel.allWorkouts.collectAsStateWithLifecycle()
+    // Refactored to use a stateless content composable to support Previews
+    HomeScreenContent(
+        workouts = workouts,
+        onWorkoutSelect = onWorkoutSelect
+    )
 }
-
-
-//@Composable
-//fun CalendarView(
-//    currentMonth: YearMonth,
-////    selectedDate: LocalDate,
-//    highlightedDates: Set<LocalDate>,
-//    onDateSelected: (LocalDate) -> Unit,
-//    onPreviousMonth: () -> Unit,
-//    onNextMonth: () -> Unit
-//) {
-//    Column(modifier = Modifier.padding(16.dp)) {
-//
-//        // Month header
-//        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-//            IconButton(onClick = onPreviousMonth) {
-//                Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, "Previous", tint = Color(0xFF6C63FF))
-//            }
-//            Text(
-//                text = "${currentMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())} ${currentMonth.year}",
-//                modifier = Modifier.weight(1f),
-//                textAlign = TextAlign.Center,
-//                fontWeight = FontWeight.Bold,
-//                fontSize = 16.sp,
-//                color = Color(0xFF222244)
-//            )
-//            IconButton(onClick = onNextMonth) {
-//                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, "Next", tint = Color(0xFF6C63FF))
-//            }
-//        }
-//
-//        // Day-of-week labels
-//        Row(modifier = Modifier.fillMaxWidth()) {
-//            listOf("Su", "Mo", "Tu", "We", "Th", "Fr", "Sa").forEach {
-//                Text(
-//                    text = it,
-//                    modifier = Modifier.weight(1f),
-//                    textAlign = TextAlign.Center,
-//                    fontSize = 11.sp,
-//                    fontWeight = FontWeight.SemiBold,
-//                    color = Color(0xFFAAAAAA)
-//                )
-//            }
-//        }
-//
-//        Spacer(Modifier.height(6.dp))
-//
-//        // Grid
-//        val daysInMonth = currentMonth.lengthOfMonth()
-//        val startOffset = currentMonth.atDay(1).dayOfWeek.value % 7
-//        val rows = ((startOffset + daysInMonth) + 6) / 7
-//
-//        for (row in 0 until rows) {currentStreak
-//            Row(modifier = Modifier.fillMaxWidth()) {
-//                for (col in 0..6) {
-//                    val day = row * 7 + col - startOffset + 1
-//                    if (day in 1..daysInMonth) {
-//                        val date = currentMonth.atDay(day)
-////                        val isSelected = date == selectedDate
-//                        val isToday = date == LocalDate.now()
-//                        val isHighlighted = date in highlightedDates
-//
-//                        DayCell(
-//                            day = day,
-////                            isSelected = isSelected,
-//                            isToday = isToday,
-//                            isHighlighted = isHighlighted,
-//                            onClick = { onDateSelected(date) },
-//                            modifier = Modifier.weight(1f)
-//                        )
-//                    } else {
-//                        Spacer(Modifier.weight(1f))
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
-//
-//@Composable
-//fun DayCell(
-//    day: Int,
-////    isSelected: Boolean,
-//    isToday: Boolean,
-//    isHighlighted: Boolean,
-//    onClick: () -> Unit,
-//    modifier: Modifier = Modifier
-//) {
-//    Box(
-//        modifier = modifier
-//            .aspectRatio(1f)
-//            .padding(2.dp)
-//            .clip(CircleShape)
-//            .background(
-//                when {
-////                    isSelected -> Color(0xFF6C63FF)
-//                    isHighlighted -> Color(0xFFE8E6FF)
-//                    else -> Color.Transparent
-//                }
-//            )
-//            .clickable { onClick() },
-//        contentAlignment = Alignment.Center
-//    ) {
-//        Text(
-//            text = day.toString(),
-//            fontSize = 13.sp,
-//            fontWeight = if (isHighlighted) FontWeight.Bold else FontWeight.Normal,
-//            color = when {
-////                isSelected -> Color.White
-//                isHighlighted || isToday -> Color(0xFF6C63FF)
-//                else -> Color(0xFFAAAAAA)
-//            }
-//        )
-//    }
-//}
 
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun HomeScreenPreview() {
     Workout_journalTheme {
-        HomeScreen()
+        // Use the stateless content composable with mock data for the Preview
+        HomeScreenContent(
+            workouts = fakeWorkouts,
+            onWorkoutSelect = { _, _ -> })
     }
 }
+
+val fakeWorkouts: List<WorkoutsWithType> = listOf(
+
+    // --- Weight ---
+    WorkoutsWithType.Weight(
+        data = WorkoutWithWeightExercises(
+            workout = Workout(
+                id = 1L,
+                workoutType = WorkoutType.WEIGHTS,
+                dateCreated = 1_700_000_000_000L
+            ),
+            exercises = listOf(
+                WeightExerciseWithSets(
+                    exercise = WeightExercise(
+                        id = 1L,
+                        workoutId = 1L,
+                        exerciseNameId = 1,
+                        notes = "Felt strong"
+                    ),
+                    exerciseName = WeightExerciseName(id = 1, name = "Bench Press"),
+                    sets = listOf(
+                        WeightSet(
+                            id = 1L,
+                            weightExerciseId = 1L,
+                            set = 1,
+                            reps = 8,
+                            weightKg = 80.0,
+                            setType = SetType.WORKING
+                        ),
+                        WeightSet(
+                            id = 2L,
+                            weightExerciseId = 1L,
+                            set = 2,
+                            reps = 8,
+                            weightKg = 82.5,
+                            setType = SetType.WORKING
+                        ),
+                        WeightSet(
+                            id = 3L,
+                            weightExerciseId = 1L,
+                            set = 3,
+                            reps = 6,
+                            weightKg = 85.0,
+                            setType = SetType.FAILURE
+                        ),
+                    )
+                ),
+                WeightExerciseWithSets(
+                    exercise = WeightExercise(
+                        id = 2L,
+                        workoutId = 1L,
+                        exerciseNameId = 2,
+                        notes = null
+                    ),
+                    exerciseName = WeightExerciseName(id = 2, name = "Overhead Press"),
+                    sets = listOf(
+                        WeightSet(
+                            id = 4L,
+                            weightExerciseId = 2L,
+                            set = 1,
+                            reps = 10,
+                            weightKg = 50.0,
+                            setType = SetType.WARMUP
+                        ),
+                        WeightSet(
+                            id = 5L,
+                            weightExerciseId = 2L,
+                            set = 2,
+                            reps = 8,
+                            weightKg = 60.0,
+                            setType = SetType.DROP
+                        ),
+                    )
+                )
+            )
+        )
+    ),
+
+    // --- Run ---
+    WorkoutsWithType.Run(
+        data = WorkoutWithRunning(
+            workout = Workout(
+                id = 2L,
+                workoutType = WorkoutType.RUN,
+                dateCreated = 1_700_100_000_000L
+            ),
+            runs = listOf(
+                Run(
+                    id = 1L,
+                    workoutId = 2L,
+                    title = "Morning 5K",
+                    distanceMeters = 5000.0,
+                    timeElapsed = 1800_000L,
+                    activeTime = 1750_000L,
+                    elevationGain = 45.0,
+                    elevationalLoss = 40.0,
+                    notes = "Good pace",
+                    polyPath = ""
+                )
+            )
+        )
+    ),
+
+    // --- HIIT ---
+    WorkoutsWithType.HIIT(
+        data = WorkoutWithHIIT(
+            workout = Workout(
+                id = 3L,
+                workoutType = WorkoutType.HIIT,
+                dateCreated = 1_700_200_000_000L
+            ),
+            config = HIITRoundsWithExercises(
+                rounds = HIITSession(
+                    id = 1L,
+                    workoutId = 3L,
+                    rounds = 4,
+                    sets = 3,
+                    roundDuration = 40_000L,
+                    restDuration = 20_000L,
+                    setRest = 60_000L
+                ),
+                exercises = listOf(
+                    HIITRoundsExerciseWithName(
+                        exercise = HIITExercise(
+                            id = 1L,
+                            sessionId = 1L,
+                            exerciseNameId = 1,
+                            notes = "",
+                            order = 1
+                        ),
+                        exerciseName = HIITExerciseName(id = 1, name = "Burpees")
+                    ),
+                    HIITRoundsExerciseWithName(
+                        exercise = HIITExercise(
+                            id = 2L,
+                            sessionId = 1L,
+                            exerciseNameId = 2,
+                            notes = "Keep core tight",
+                            order = 2
+                        ),
+                        exerciseName = HIITExerciseName(id = 2, name = "Mountain Climbers")
+                    )
+                )
+            )
+        )
+    )
+)

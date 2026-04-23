@@ -18,10 +18,10 @@ import androidx.room.PrimaryKey
     indices = [Index("weightExerciseId")]
 )
 data class WeightSet(
-    @PrimaryKey(autoGenerate = true) val id : Int =0,
-    val weightExerciseId: Int,
+    @PrimaryKey(autoGenerate = true) val id : Long =0,
+    val weightExerciseId: Long,
     val set : Int,
     val reps : Int,
-    val weightKg : Float,
+    val weightKg : Double,
     val setType: SetType
     )

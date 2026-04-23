@@ -30,5 +30,9 @@ data class RunPB(
     val workoutId : Long,
     val distance : RunDistance,
     val timeElapsed : Long,
+    val windowStart : Int = 0,
+    val windowEnd : Int = 0,
+    val totalDistanceMeters : Double? = null,
     val dateCreated : Long = System.currentTimeMillis()
+
 )

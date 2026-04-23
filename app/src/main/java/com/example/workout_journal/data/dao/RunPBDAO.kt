@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface RunPBDAO {
     @Insert
-    suspend fun insertRunPB(runPB: RunPB)
+    suspend fun insertRunPB(runPB: RunPB): Long
 
     @Transaction
     @Query("""
@@ -41,5 +41,12 @@ interface RunPBDAO {
     ORDER BY timeElapsed ASC 
     LIMIT 1
 """)
-    suspend fun getBestForDistance(distance: RunDistance): RunPB?
+    suspend fun getCurrentPB(distance: RunDistance): RunPB?
+
+    @Query("""
+        SELECT * FROM runPB
+        WHERE distance = :distance
+        ORDER BY dateCreated ASC
+    """)
+    fun getPBHistory(distance: RunDistance): Flow<List<RunPB>>
 }
