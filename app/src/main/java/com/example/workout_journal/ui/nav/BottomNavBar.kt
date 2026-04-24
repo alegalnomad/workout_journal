@@ -19,8 +19,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 
 sealed class BottomNavItem(val route: String, val label: String, val icon: ImageVector) {
     object Home    : BottomNavItem("home_graph",    "Home",    Icons.Default.Home)
-    object Stats    : BottomNavItem("stats",    "Stats",    Icons.Default.BarChart)
-    object Settings : BottomNavItem("settings", "Settings", Icons.Default.Settings)
+    object Stats    : BottomNavItem("stats_graph",    "Stats",    Icons.Default.BarChart)
+    object Settings : BottomNavItem("settings_graph", "Settings", Icons.Default.Settings)
 }
 
 @Composable

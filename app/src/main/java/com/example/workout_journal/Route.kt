@@ -18,14 +18,14 @@ sealed class Route (val path: String){
     }
 
     sealed class Run(path: String) : Route(path) {
-        object Record : Weight("run/record")
-        object Summary : Weight("run/summary")
+        object Record : Run("run/record")
+        object Summary : Run("run/summary")
     }
 
     sealed class HIIT(path: String) : Route(path) {
-        object Record : Weight("hiit/record")
-        object Timer : Weight("hiit/summary")
-        object Summary : Weight("hiit/summary")
+        object Record : HIIT("hiit/record")
+        object Timer : HIIT("hiit/timer")
+        object Summary : HIIT("hiit/summary")
     }
 
     object Stats : Route("stats")

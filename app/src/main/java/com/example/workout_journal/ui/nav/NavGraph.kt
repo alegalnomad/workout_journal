@@ -4,7 +4,7 @@ package com.example.workout_journal.ui.nav
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -28,17 +28,17 @@ import com.example.workout_journal.ui.viewmodel.HIITViewModel
 import com.example.workout_journal.ui.viewmodel.HomeViewModel
 import com.example.workout_journal.ui.viewmodel.RunViewModel
 import com.example.workout_journal.ui.viewmodel.WeightsViewModel
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import androidx.compose.runtime.CompositionLocalProvider
+
 
 @Composable
 fun AppNavGraph(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController())
 {
     NavHost(
         navController = navController,
-        startDestination = "home_graph"
+        startDestination = "home_graph",
+        modifier = modifier
     ) {
         // Home graph
         navigation(
@@ -49,16 +49,15 @@ fun AppNavGraph(
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry("home_graph")
                 }
-                CompositionLocalProvider(LocalViewModelStoreOwner provides parentEntry) {
-                    val viewModel: HomeViewModel = hiltViewModel()
-                    HomeScreen(
-                        viewModel = viewModel,
-                        onWorkoutSelect = { workoutId, workoutType ->
-                            viewModel.selectWorkout(workoutId, workoutType)
-                            navController.navigate(Route.Workout.Detail(workoutId).resolvedPath())
-                        }
-                    )
-                }
+                val viewModel:HomeViewModel = hiltViewModel(viewModelStoreOwner = parentEntry, key = null)
+                HomeScreen(
+                    viewModel = viewModel,
+                    onWorkoutSelect = { workoutId, workoutType ->
+                        viewModel.selectWorkout(workoutId, workoutType)
+                        navController.navigate(Route.Workout.Detail(workoutId).resolvedPath())
+                    }
+                )
+
             }
 
             composable(
@@ -70,13 +69,14 @@ fun AppNavGraph(
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry("home_graph")
                 }
-                CompositionLocalProvider(LocalViewModelStoreOwner provides parentEntry) {
-                    val viewModel: HomeViewModel = hiltViewModel()
+                val viewModel: HomeViewModel = hiltViewModel(parentEntry, null)
 
                 WorkoutDetailScreen(
                     viewModel = viewModel
                 )
             }
+
+
         }
         // Weight graph
         navigation(
@@ -195,7 +195,7 @@ fun AppNavGraph(
         }
         // Stats graph
         navigation(
-            route = "stats",
+            route = "stats_graph",
             startDestination = Route.Stats.path
         ) {
             composable(Route.Stats.path) {
@@ -204,7 +204,7 @@ fun AppNavGraph(
         }
         // Settings graph
         navigation(
-            route = "settings",
+            route = "settings_graph",
             startDestination = Route.Settings.path
         ) {
             composable(Route.Settings.path) {

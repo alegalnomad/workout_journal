@@ -29,8 +29,8 @@ fun MainScaffold(){
     println(currentGraphRoute)
     val showBottomBar = currentGraphRoute  in listOf(
         "home_graph",
-        "stats",
-        "settings"
+        "stats_graph",
+        "settings_graph"
     )
 
     Scaffold(
@@ -45,11 +45,12 @@ fun MainScaffold(){
             }
         }
     ) { innerPadding ->
-        AppNavGraph(
-            modifier = Modifier.padding(innerPadding),
-            navController = navController
-        )
-
+        Box(modifier = Modifier.padding(innerPadding)) {
+            AppNavGraph(
+                modifier = Modifier,
+                navController = navController
+            )
+        }
     }
 }
 
