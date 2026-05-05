@@ -46,6 +46,9 @@ object AppModule {
     fun provideRunSplitsDao(db: AppDatabase): RunSplitsDAO = db.runSplitsDao()
 
     @Provides
+    fun provideShoesDao(db: AppDatabase): ShoesDAO = db.shoesDao()
+
+    @Provides
     fun provideWeightExerciseDao(db: AppDatabase): WeightExerciseDAO = db.weightExerciseDao()
 
     @Provides

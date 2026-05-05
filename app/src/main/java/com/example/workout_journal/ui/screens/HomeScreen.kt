@@ -1,17 +1,15 @@
 package com.example.workout_journal.ui.screens
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
+import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.workout_journal.data.entity.HIITExercise
 import com.example.workout_journal.data.entity.HIITExerciseName
 import com.example.workout_journal.data.entity.HIITSession
+import com.example.workout_journal.data.entity.MeasureUnit
 import com.example.workout_journal.data.entity.Run
 import com.example.workout_journal.data.entity.SetType
 import com.example.workout_journal.data.entity.WeightExercise
@@ -25,26 +23,33 @@ import com.example.workout_journal.data.relations.WeightExerciseWithSets
 import com.example.workout_journal.data.relations.WorkoutWithHIIT
 import com.example.workout_journal.data.relations.WorkoutWithRunning
 import com.example.workout_journal.data.relations.WorkoutWithWeightExercises
-import com.example.workout_journal.ui.HomeScreenContent
-import com.example.workout_journal.ui.cards.HIITWorkoutCard
-import com.example.workout_journal.ui.cards.RunWorkoutCard
-import com.example.workout_journal.ui.cards.WeightWorkoutCard
+import com.example.workout_journal.ui.buttons.SpeedDialFAB
+import com.example.workout_journal.ui.content.HomeScreenContent
 import com.example.workout_journal.ui.theme.Workout_journalTheme
 import com.example.workout_journal.ui.viewmodel.HomeViewModel
 import com.example.workout_journal.ui.viewmodel.WorkoutsWithType
 
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel,
+    viewModel: HomeViewModel = hiltViewModel(),
     onWorkoutSelect: (Long, WorkoutType) -> Unit,
+    onExerciseSelection: (String) ->Unit
 ) {
     val workouts by viewModel.allWorkouts.collectAsStateWithLifecycle()
-    // Refactored to use a stateless content composable to support Previews
+    val measureUnit by viewModel.measureUnit.collectAsStateWithLifecycle()
+
+    SpeedDialFAB(onExerciseSelection)
+
     HomeScreenContent(
         workouts = workouts,
-        onWorkoutSelect = onWorkoutSelect
+        onWorkoutSelect = onWorkoutSelect,
+        measureUnit = measureUnit
     )
 }
+// Refactored to use a stateless content composable to support Previews
+
 
 
 @Preview(showBackground = true)
@@ -54,7 +59,9 @@ fun HomeScreenPreview() {
         // Use the stateless content composable with mock data for the Preview
         HomeScreenContent(
             workouts = fakeWorkouts,
-            onWorkoutSelect = { _, _ -> })
+            onWorkoutSelect = { _, _ -> },
+            measureUnit = MeasureUnit.IMPERIAL
+        )
     }
 }
 
@@ -143,20 +150,20 @@ val fakeWorkouts: List<WorkoutsWithType> = listOf(
                 workoutType = WorkoutType.RUN,
                 dateCreated = 1_700_100_000_000L
             ),
-            runs = listOf(
+            runs =
                 Run(
                     id = 1L,
                     workoutId = 2L,
                     title = "Morning 5K",
-                    distanceMeters = 5000.0,
+                    distanceMeters = 5.0,
                     timeElapsed = 1800_000L,
                     activeTime = 1750_000L,
                     elevationGain = 45.0,
                     elevationalLoss = 40.0,
                     notes = "Good pace",
-                    polyPath = ""
+                    polyPath = emptyList()
+
                 )
-            )
         )
     ),
 
@@ -174,9 +181,10 @@ val fakeWorkouts: List<WorkoutsWithType> = listOf(
                     workoutId = 3L,
                     rounds = 4,
                     sets = 3,
-                    roundDuration = 40_000L,
-                    restDuration = 20_000L,
-                    setRest = 60_000L
+                    roundDuration = 40,
+                    restDuration = 20,
+                    setRest = 60,
+                    notes = ""
                 ),
                 exercises = listOf(
                     HIITRoundsExerciseWithName(
@@ -184,7 +192,6 @@ val fakeWorkouts: List<WorkoutsWithType> = listOf(
                             id = 1L,
                             sessionId = 1L,
                             exerciseNameId = 1,
-                            notes = "",
                             order = 1
                         ),
                         exerciseName = HIITExerciseName(id = 1, name = "Burpees")
@@ -194,7 +201,6 @@ val fakeWorkouts: List<WorkoutsWithType> = listOf(
                             id = 2L,
                             sessionId = 1L,
                             exerciseNameId = 2,
-                            notes = "Keep core tight",
                             order = 2
                         ),
                         exerciseName = HIITExerciseName(id = 2, name = "Mountain Climbers")

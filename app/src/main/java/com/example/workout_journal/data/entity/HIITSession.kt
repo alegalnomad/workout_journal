@@ -22,7 +22,8 @@ data class HIITSession(
     val workoutId: Long,
     val rounds: Int,
     val sets: Int,
-    val roundDuration: Long,
-    val restDuration: Long,
-    val setRest: Long,
+    val roundDuration: Int,
+    val restDuration: Int,
+    val setRest: Int,
+    val notes: String?
     )

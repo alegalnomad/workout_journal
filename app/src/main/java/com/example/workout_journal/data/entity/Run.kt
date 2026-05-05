@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.google.android.gms.maps.model.LatLng
 
 @Entity(
     tableName = "run",
@@ -18,14 +19,14 @@ import androidx.room.PrimaryKey
     indices = [Index("workoutId")]
 )
 data class Run(
-    @PrimaryKey(autoGenerate = true) val id : Long =0,
-    val workoutId : Long,
-    val title : String,
-    val distanceMeters : Double,
-    val timeElapsed : Long,
+    @PrimaryKey(autoGenerate = true) val id: Long =0,
+    val workoutId: Long,
+    val title: String?,
+    val distanceMeters: Double,
+    val timeElapsed: Long,
     val activeTime: Long,
-    val elevationGain : Double,
-    val elevationalLoss : Double,
-    val notes : String,
-    val polyPath: String,
+    val elevationGain: Double,
+    val elevationalLoss: Double,
+    val notes: String?,
+    val polyPath: List<LatLng>,
 )

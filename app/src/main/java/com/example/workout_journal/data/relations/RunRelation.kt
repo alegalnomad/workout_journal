@@ -11,7 +11,7 @@ data class WorkoutWithRunning(
     @Relation(
         parentColumn = "id",
         entityColumn = "workoutId")
-    val runs: List<Run>
+    val runs: Run
 )
 
 data class RunWithSplits(

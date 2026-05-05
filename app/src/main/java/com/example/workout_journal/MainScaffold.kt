@@ -26,7 +26,7 @@ fun MainScaffold(){
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
     val currentGraphRoute = navBackStackEntry?.destination?.parent?.route
-    println(currentGraphRoute)
+
     val showBottomBar = currentGraphRoute  in listOf(
         "home_graph",
         "stats_graph",

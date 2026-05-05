@@ -27,6 +27,5 @@ data class HIITExercise(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val sessionId: Long,
     val exerciseNameId: Int,
-    val notes: String,
     val order: Int
 )

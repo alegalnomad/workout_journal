@@ -8,7 +8,7 @@ import com.example.workout_journal.data.entity.HIITExercise
 @Dao
 interface HIITExerciseDAO {
     @Insert
-    suspend fun insertHIITExercise(exercise: HIITExercise)
+    suspend fun insertHIITExercise(exercise: HIITExercise): Long
 
     @Delete
     suspend fun deleteHIITExercise(exercise: HIITExercise)

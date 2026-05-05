@@ -3,6 +3,7 @@ package com.example.workout_journal.service
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.location.Location
@@ -12,7 +13,12 @@ import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.example.workout_journal.R
+import com.example.workout_journal.data.datastore.UserPreferencesManager
+import com.example.workout_journal.data.entity.MeasureUnit
+import com.example.workout_journal.utils.distanceLabel
 import com.example.workout_journal.utils.formatElapsedTime
+import com.example.workout_journal.utils.toKm
+import com.example.workout_journal.utils.toMiles
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -23,19 +29,36 @@ import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.math.abs
 
 
 data class TempSplit(
     val splitIndex: Int,
     val splitTime: Long,
-    val elevationGain:Double,
-    val elevationalLoss:Double,
+    val elevationGain: Double,
+    val elevationalLoss: Double,
 )
+
 class RunTrackingService : LifecycleService() {
 
+    @Inject
+    lateinit var preferencesManager: UserPreferencesManager
+
+    private val contentPendingIntent: PendingIntent by lazy {
+        val openAppIntent = packageManager.getLaunchIntentForPackage(packageName)
+            ?.apply { flags = Intent.FLAG_ACTIVITY_SINGLE_TOP }
+        PendingIntent.getActivity(
+            this,
+            0,
+            openAppIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+    }
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var totalDistanceMetres = 0.0
     private var lastSplitMetres = 0.0
@@ -65,6 +88,7 @@ class RunTrackingService : LifecycleService() {
         val activeSplits = MutableStateFlow<List<TempSplit>>(emptyList())
         val isAutoPaused = MutableStateFlow(false)
         val isManuallyPaused = MutableStateFlow(false)
+
     }
 
     override fun onCreate() {
@@ -83,6 +107,7 @@ class RunTrackingService : LifecycleService() {
                 startForegroundService()
                 startTimer()
             }
+
             "PAUSE_RESUME" -> pauseResumeService()
             "STOP" -> stopService()
         }
@@ -115,15 +140,13 @@ class RunTrackingService : LifecycleService() {
 
     private fun startTimer() {
         timerJob?.cancel()
-        timerJob = lifecycleScope.launch{
+        timerJob = lifecycleScope.launch {
             while (true) {
                 val elapsed = System.currentTimeMillis() - startTime
                 totalTimeMillis.value = elapsed
 
                 updateNotification(
-                    currentDistance.value,
-                    elapsed,
-                    isManuallyPaused.value || isAutoPaused.value
+                    currentDistance.value, elapsed, isManuallyPaused.value || isAutoPaused.value
                 )
 
                 delay(1000) // Update every second
@@ -134,7 +157,8 @@ class RunTrackingService : LifecycleService() {
     @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private fun startLocationUpdates() {
 
-        val fineLoc = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        val fineLoc =
+            checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED
 
         if (!fineLoc) {
             trackingError.value = "High accuracy location permission is required to track runs."
@@ -144,11 +168,12 @@ class RunTrackingService : LifecycleService() {
         }
 
         val request = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000L)
-            .setMinUpdateIntervalMillis(2000L)
-            .build()
-        
+            .setMinUpdateIntervalMillis(2000L).build()
+
         try {
-            fusedLocationClient.requestLocationUpdates(request, locationCallback, Looper.getMainLooper())
+            fusedLocationClient.requestLocationUpdates(
+                request, locationCallback, Looper.getMainLooper()
+            )
         } catch (unlikely: SecurityException) {
             unlikely.printStackTrace()
 
@@ -208,17 +233,17 @@ class RunTrackingService : LifecycleService() {
                     val lastPoint = pathPoints.value[pathPoints.value.size - 2]
                     val distanceResult = FloatArray(1)
                     Location.distanceBetween(
-                        lastPoint.latitude, lastPoint.longitude,
-                        newPoint.latitude, newPoint.longitude,
+                        lastPoint.latitude,
+                        lastPoint.longitude,
+                        newPoint.latitude,
+                        newPoint.longitude,
                         distanceResult
                     )
                     totalDistanceMetres += distanceResult[0]
                     currentDistance.value = totalDistanceMetres
 
                     updateNotification(
-                        totalDistanceMetres,
-                        System.currentTimeMillis() - startTime,
-                        false
+                        totalDistanceMetres, System.currentTimeMillis() - startTime, false
                     )
 
                     checkAndSaveSplit()
@@ -233,7 +258,7 @@ class RunTrackingService : LifecycleService() {
 
     private fun checkAndSaveSplit() {
         if (totalDistanceMetres >= lastSplitMetres + splitThreshold) {
-            saveSplitToDb(1.0) 
+            saveSplitToDb(1.0)
             lastSplitMetres += splitThreshold
             lastSplitTime = System.currentTimeMillis()
         }
@@ -277,12 +302,10 @@ class RunTrackingService : LifecycleService() {
     @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private fun startForegroundService() {
         createNotificationChannel()
-        val notification = NotificationCompat.Builder(this, "run_channel")
-            .setContentTitle("Workout Journal")
-            .setContentText("Tracking your run...")
-            .setSmallIcon(R.drawable.ic_launcher_foreground) 
-            .setOngoing(true)
-            .build()
+        val notification =
+            NotificationCompat.Builder(this, "run_channel").setContentTitle("Workout Journal")
+                .setContentText("Tracking your run...")
+                .setSmallIcon(R.drawable.ic_launcher_foreground).setOngoing(true).build()
 
         // minSdk is 33, so foregroundServiceType is required for location
         startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION)
@@ -291,36 +314,54 @@ class RunTrackingService : LifecycleService() {
 
     private fun createNotificationChannel() {
         val channel = NotificationChannel(
-            "run_channel",
-            "Run Tracking",
-            NotificationManager.IMPORTANCE_LOW
+            "run_channel", "Run Tracking", NotificationManager.IMPORTANCE_LOW
         )
         val manager = getSystemService(NotificationManager::class.java)
         manager.createNotificationChannel(channel)
     }
 
     private fun updateNotification(distance: Double, time: Long, isPaused: Boolean) {
-        val statusText = if (isPaused) "Paused" else "Tracking Run"
-        val statsText = formatNotificationText(distance, time)
 
-        val notification = NotificationCompat.Builder(this, "run_channel")
-            .setContentTitle(statusText)
-            .setContentText(statsText)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setOngoing(true)
-            .setOnlyAlertOnce(true) // VERY IMPORTANT: Prevents noise every second
-            .build()
+        lifecycleScope.launch {
+            val unit = preferencesManager.userPreferencesFlow.map { it.measureUnit }.first()
+            val statsText = formatNotificationText(distance, time, unit)
 
-        val manager = getSystemService(NotificationManager::class.java)
-        manager.notify(1, notification)
+            val notification =
+                NotificationCompat.Builder(this@RunTrackingService, "run_channel")
+                    .setContentTitle(setStatusText(isPaused))
+                    .setContentText(statsText)
+                    .setContentIntent(contentPendingIntent)
+                    .setSmallIcon(R.drawable.ic_launcher_foreground)
+                    .setOngoing(true)
+                    .setSilent(true)
+                    .setOnlyAlertOnce(true)
+                    .build()
+
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.notify(1, notification)
+        }
     }
 
-    private fun formatNotificationText(distanceMetres: Double, timeMillis: Long): String {
-        val distanceKm = distanceMetres / 1000.0
+    private fun setStatusText(isPaused: Boolean): String =
+        if (isPaused) "Paused" else "Tracking Run"
 
+    private fun formatNotificationText(
+        distanceMetres: Double,
+        timeMillis: Long,
+        unit: MeasureUnit
+    ): String {
+        val distance = if (unit == MeasureUnit.METRIC) {
+            toKm(distanceMetres)
+        } else {
+            toMiles(distanceMetres)
+        }
         val timeStr = formatElapsedTime(timeMillis)
 
-        return "Distance: %.2f km  |  Time: %s".format(distanceKm, timeStr)
+        return "Distance: %.2f ${unit.distanceLabel()}  |  Time: %s".format(distance, timeStr)
     }
 
 }
+
+
+
+

@@ -12,9 +12,10 @@ android {
     namespace = "com.example.workout_journal"
     compileSdk = 36
 
+
     defaultConfig {
         applicationId = "com.example.workout_journal"
-        minSdk = 33
+        minSdk = 34
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -40,6 +41,10 @@ android {
     }
 
 }
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 
 dependencies {
     implementation(libs.androidx.core.ktx)
@@ -62,6 +67,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.lifecycle.service)
     implementation(libs.androidx.compose.remote.creation.core)
+    implementation(libs.androidx.ui)
     ksp(libs.androidx.room.compiler)
 
     // Location & Maps

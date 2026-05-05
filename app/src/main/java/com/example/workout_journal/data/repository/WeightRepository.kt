@@ -24,11 +24,13 @@ class WeightRepository @Inject constructor(
     //WeightExerciseName
     val allNames: Flow<List<WeightExerciseName>> = weightExerciseNameDAO.getAll()
     suspend fun addName(name: WeightExerciseName) = weightExerciseNameDAO.insertWeightExerciseName(name)
+    suspend fun updateName(name: WeightExerciseName) = weightExerciseNameDAO.updateWeightExerciseName(name)
     suspend fun deleteName(name: WeightExerciseName) = weightExerciseNameDAO.deleteWeightExerciseName(name)
     suspend fun searchName(query: String) = weightExerciseNameDAO.search(query)
+    suspend fun selectedExercise(id:Int) = weightExerciseNameDAO.selectedExercise(id)
 
     //WeightExercise
-    suspend fun addExercise(exercise: WeightExercise) = weightExerciseDAO.insertWeightExercise(exercise)
+    suspend fun addExercise(exercise: WeightExercise): Long = weightExerciseDAO.insertWeightExercise(exercise)
     suspend fun deleteExercise(exercise: WeightExercise) = weightExerciseDAO.deleteWeightExercise(exercise)
     suspend fun updateExercise(exercise: WeightExercise) = weightExerciseDAO.updateWeightExercise(exercise)
     suspend fun addExercises(exercises: List<WeightExercise>) = weightExerciseDAO.insertAllWeightExercises(exercises)

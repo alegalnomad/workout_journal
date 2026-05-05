@@ -15,9 +15,10 @@ class HIITRepository @Inject constructor(
 ) {
     //HIIT Exercise Names
     fun getAllNames() = hiitExerciseNameDAO.getAll()
-    suspend fun searchNames(query: String) = hiitExerciseNameDAO.search(query)
+    fun searchNames(query: String) = hiitExerciseNameDAO.search(query)
     suspend fun addName(name: HIITExerciseName) = hiitExerciseNameDAO.insertHIITExerciseName(name)
     suspend fun deleteName(name: HIITExerciseName) = hiitExerciseNameDAO.deleteHIITExerciseName(name)
+    suspend fun getName(id: Int) = hiitExerciseNameDAO.getName(id)
 
     //HIIT Exercises
     suspend fun addExercise(exercise: HIITExercise) = hiitExerciseDAO.insertHIITExercise(exercise)

@@ -30,7 +30,7 @@ import javax.inject.Inject
 
 data class StatsUiState(
     val weightPBs: List<WeightPbWithNames> = emptyList(),
-    val runPbs: List<RunPB> = emptyList(),
+    val runPBs: List<RunPB> = emptyList(),
     val isLoading: Boolean = true
 )
 
@@ -47,13 +47,6 @@ class StatsViewModel @Inject constructor(
         viewModelScope.launch {
             val saved = preferencesManager.userPreferencesFlow.map { it.selectedExerciseIds }.first()
             _selectedExerciseNameIds.value = saved
-        }
-    }
-
-    fun selectExercise(exerciseNameId: Int) {
-        _selectedExerciseNameIds.update { current ->
-            if (exerciseNameId in current) current - exerciseNameId  // deselect
-            else current + exerciseNameId                            // select
         }
     }
 
@@ -90,7 +83,8 @@ class StatsViewModel @Inject constructor(
     ) { weightPBs, runPBs ->
         StatsUiState(
             weightPBs = weightPBs,
-            runPbs = runPBs
+            runPBs = runPBs,
+            isLoading = false
         )
     }.stateIn(
         scope = viewModelScope,

@@ -20,7 +20,7 @@ import androidx.room.PrimaryKey
 data class WeightSet(
     @PrimaryKey(autoGenerate = true) val id : Long =0,
     val weightExerciseId: Long,
-    val set : Int,
+    val set : Int =0,
     val reps : Int,
     val weightKg : Double,
     val setType: SetType

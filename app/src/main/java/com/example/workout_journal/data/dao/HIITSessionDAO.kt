@@ -8,7 +8,7 @@ import com.example.workout_journal.data.entity.HIITSession
 @Dao
 interface HIITSessionDAO {
     @Insert
-    suspend fun insertHIITSession(hiitSession: HIITSession)
+    suspend fun insertHIITSession(hiitSession: HIITSession): Long
 
     @Delete
     suspend fun deleteHIITSession(hiitSession: HIITSession)

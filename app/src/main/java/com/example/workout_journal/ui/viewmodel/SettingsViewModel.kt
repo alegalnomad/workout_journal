@@ -5,8 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.workout_journal.data.datastore.UserPreferences
 import com.example.workout_journal.data.datastore.UserPreferencesManager
 import com.example.workout_journal.data.entity.MeasureUnit
+import com.example.workout_journal.data.entity.WeightExerciseName
+import com.example.workout_journal.data.repository.WeightRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -26,20 +29,29 @@ data class SettingsUiState(
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val preferencesManager: UserPreferencesManager
+    private val preferencesManager: UserPreferencesManager,
+    private val weightRepository: WeightRepository
 ) : ViewModel() {
 
-    val uiState: StateFlow<SettingsUiState> = preferencesManager.userPreferencesFlow.map { preferences ->
-        SettingsUiState(
-            measureUnit = preferences.measureUnit,
-            userName = preferences.userName,
-            selectedExerciseIds = preferences.selectedExerciseIds
+    val uiState: StateFlow<SettingsUiState> =
+        preferencesManager.userPreferencesFlow.map { preferences ->
+            SettingsUiState(
+                measureUnit = preferences.measureUnit,
+                userName = preferences.userName,
+                selectedExerciseIds = preferences.selectedExerciseIds
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
+            initialValue = SettingsUiState()
         )
-    }.stateIn(
-        scope = viewModelScope,
-        started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
-        initialValue = SettingsUiState()
-    )
+
+    val exercises : StateFlow<List<WeightExerciseName>> = weightRepository.allNames
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
     fun updateMeasureUnit(unit: MeasureUnit) {
         viewModelScope.launch {
@@ -61,7 +73,8 @@ class SettingsViewModel @Inject constructor(
 
     fun toggleExerciseId(id: Int) {
         viewModelScope.launch {
-            val current = preferencesManager.userPreferencesFlow.map {it.selectedExerciseIds}.first()
+            val current =
+                preferencesManager.userPreferencesFlow.map { it.selectedExerciseIds }.first()
             val updated = if (id in current) {
                 current - id
             } else {

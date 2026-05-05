@@ -3,17 +3,20 @@ package com.example.workout_journal.data.repository
 import com.example.workout_journal.data.dao.RunDAO
 import com.example.workout_journal.data.dao.RunPBDAO
 import com.example.workout_journal.data.dao.RunSplitsDAO
+import com.example.workout_journal.data.dao.ShoesDAO
 import com.example.workout_journal.data.datastore.UserPreferencesManager
 import com.example.workout_journal.data.entity.Run
 import com.example.workout_journal.data.entity.RunDistance
 import com.example.workout_journal.data.entity.RunPB
 import com.example.workout_journal.data.entity.RunSplits
+import com.example.workout_journal.data.entity.Shoes
 import javax.inject.Inject
 
 class RunRepository @Inject constructor(
     private val runDAO: RunDAO,
     private val runSplitsDAO: RunSplitsDAO,
     private val runPbDAO: RunPBDAO,
+    private val shoesDAO: ShoesDAO,
 ) {
     // RunDAO
     suspend fun insertRun(run: Run) = runDAO.insertRun(run)
@@ -106,5 +109,11 @@ class RunRepository @Inject constructor(
             )
         }
     }
+
+    // Shoes DAO
+
+    suspend fun addShoe(shoes: Shoes) = shoesDAO.insertShoes(shoes)
+    suspend fun updateShoe(shoes: Shoes) = shoesDAO.updateShoes(shoes)
+    suspend fun fetchShoes(id: Int) = shoesDAO.fetchShoeDetails(id)
 
 }

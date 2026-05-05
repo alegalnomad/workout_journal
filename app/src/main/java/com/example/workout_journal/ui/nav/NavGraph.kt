@@ -13,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.workout_journal.Route
+import com.example.workout_journal.ui.screens.ExerciseSelectionScreen
 import com.example.workout_journal.ui.screens.HIITRecordScreen
 import com.example.workout_journal.ui.screens.HIITSummaryScreen
 import com.example.workout_journal.ui.screens.HIITTimerScreen
@@ -27,6 +28,7 @@ import com.example.workout_journal.ui.screens.WeightSummaryScreen
 import com.example.workout_journal.ui.viewmodel.HIITViewModel
 import com.example.workout_journal.ui.viewmodel.HomeViewModel
 import com.example.workout_journal.ui.viewmodel.RunViewModel
+import com.example.workout_journal.ui.viewmodel.SettingsViewModel
 import com.example.workout_journal.ui.viewmodel.WeightsViewModel
 
 
@@ -55,6 +57,9 @@ fun AppNavGraph(
                     onWorkoutSelect = { workoutId, workoutType ->
                         viewModel.selectWorkout(workoutId, workoutType)
                         navController.navigate(Route.Workout.Detail(workoutId).resolvedPath())
+                    },
+                    onExerciseSelection = {route ->
+                        navController.navigate(route)
                     }
                 )
 
@@ -104,6 +109,7 @@ fun AppNavGraph(
                 WeightSummaryScreen(
                     viewModel = viewModel,
                     onSave = {
+                        viewModel.onSave()
                         navController.popBackStack(
                             route = Route.Workout.List.path,
                             inclusive = false
@@ -136,7 +142,8 @@ fun AppNavGraph(
                 val viewModel: RunViewModel = hiltViewModel(parentEntry)
                 RunSummaryScreen(
                     viewModel = viewModel,
-                    onSave = {
+                    onSave = { title:String?, note:String? ->
+                        viewModel.saveRun(title,note)
                         navController.popBackStack(
                             route = Route.Workout.List.path,
                             inclusive = false
@@ -184,7 +191,8 @@ fun AppNavGraph(
                 val viewModel: HIITViewModel = hiltViewModel(parentEntry, null)
                 HIITSummaryScreen(
                     viewModel = viewModel,
-                    onSave = {
+                    onSave = { note:String? ->
+                        viewModel.saveWorkout(note)
                         navController.popBackStack(
                             route = Route.Workout.List.path,
                             inclusive = false
@@ -205,11 +213,34 @@ fun AppNavGraph(
         // Settings graph
         navigation(
             route = "settings_graph",
-            startDestination = Route.Settings.path
+            startDestination = Route.Settings.Home.path
         ) {
-            composable(Route.Settings.path) {
-                SettingsScreen()
+            composable(Route.Settings.Home.path) {
+                val parentEntry = remember(it) {
+                    navController.getBackStackEntry("settings_graph")
+                }
+                val viewModel: SettingsViewModel = hiltViewModel(parentEntry,null)
+                SettingsScreen(
+                    viewModel = viewModel,
+                    onSelectExercise = {
+                        navController.navigate(Route.Settings.ExerciseSelection.path)
+                    }
+                )
             }
+        }
+
+        composable (Route.Settings.ExerciseSelection.path){
+            val parentEntry = remember(it) {
+                navController.getBackStackEntry("settings_graph")
+            }
+            val viewModel: SettingsViewModel = hiltViewModel(parentEntry,null)
+            ExerciseSelectionScreen(
+                viewModel = viewModel,
+                onSave = { ids: Set<Int> ->
+                    viewModel.saveSelectedExerciseIds(ids)
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

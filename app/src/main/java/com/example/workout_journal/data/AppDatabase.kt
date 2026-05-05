@@ -19,10 +19,11 @@ import com.example.workout_journal.data.entity.*
         HIITSession::class,
         HIITExercise::class,
         HIITExerciseName::class,
-        BodyHeightWeight::class
+        BodyHeightWeight::class,
+        Shoes::class
     ],
     version = 1,
-    exportSchema = false
+    exportSchema = false // change it before deploying.
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -30,6 +31,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun runDao(): RunDAO
     abstract fun runPbDao(): RunPBDAO
     abstract fun runSplitsDao(): RunSplitsDAO
+    abstract fun shoesDao() : ShoesDAO
     abstract fun weightExerciseDao(): WeightExerciseDAO
     abstract fun weightExerciseNameDao(): WeightExerciseNameDAO
     abstract fun weightSetDao(): WeightSetDAO

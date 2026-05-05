@@ -1,8 +1,11 @@
 package com.example.workout_journal.ui.viewmodel
 
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.workout_journal.Route
+import com.example.workout_journal.data.datastore.UserPreferencesManager
+import com.example.workout_journal.data.entity.MeasureUnit
 import com.example.workout_journal.data.entity.Workout
 import com.example.workout_journal.data.entity.WorkoutType
 import com.example.workout_journal.data.relations.WorkoutWithHIIT
@@ -45,15 +48,49 @@ sealed class WorkoutDetailResult {
 }
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val workoutRepository: WorkoutRepository
+    private val workoutRepository: WorkoutRepository,
+    private val preferencesManager: UserPreferencesManager
 ) : ViewModel() {
+
+    val measureUnit = preferencesManager.userPreferencesFlow.map { it.measureUnit }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = MeasureUnit.METRIC
+        )
     val allWorkouts: StateFlow<List<WorkoutsWithType>> = combine(
         workoutRepository.weightWorkouts(),
         workoutRepository.runWorkouts(),
         workoutRepository.hiitWorkouts()
     ) { weight, run, hiit ->
-        val weightItem = weight.map { Weight(it) }
-        val runItem = run.map { Run(it) }
+        val weightItem = weight.map { data ->
+            val converted = if (measureUnit.value == MeasureUnit.IMPERIAL) {
+                data.copy(
+                    exercises = data.exercises.map { exerciseWithSets ->
+                        exerciseWithSets.copy(
+                            sets = exerciseWithSets.sets.map { set ->
+                                set.copy(weightKg = set.weightKg * 2.20462)
+                            }
+                        )
+                    }
+                )
+            } else {
+                data
+            }
+            Weight(converted)
+        }
+        val runItem = run.map { data ->
+            val converted = if (measureUnit.value == MeasureUnit.IMPERIAL){
+                data.copy(
+                    runs = data.runs.copy(distanceMeters = data.runs.distanceMeters * 0.000621371)
+                )
+            } else {
+                data.copy(
+                    runs = data.runs.copy(distanceMeters = data.runs.distanceMeters / 1000)
+                )
+            }
+            Run(converted)
+        }
         val hiitItem = hiit.map { HIIT(it) }
         (weightItem + runItem + hiitItem).sortedBy { it.timeStamp }
 
@@ -70,10 +107,34 @@ class HomeViewModel @Inject constructor(
         .flatMapLatest { (id,type) ->
         when (type) {
                 WorkoutType.WEIGHTS -> workoutRepository.getWeightWorkout(id)
-                    .map { WorkoutDetailResult.Weight(it) }
+                    .map { data ->
+                        val converted = if (measureUnit.value == MeasureUnit.IMPERIAL) {
+                            data.copy(
+                                exercises = data.exercises.map { exerciseWithSets ->
+                                    exerciseWithSets.copy(
+                                        sets = exerciseWithSets.sets.map { set ->
+                                            set.copy(weightKg = set.weightKg * 2.20462)
+                                        }
+                                    )
+                                }
+                            )
+                        } else {
+                            data
+                        }
+                        WorkoutDetailResult.Weight(converted) }
 
                 WorkoutType.RUN -> workoutRepository.getRunWorkout(id)
-                    .map { WorkoutDetailResult.Run(it) }
+                    .map { data ->
+                        val converted = if (measureUnit.value == MeasureUnit.IMPERIAL) {
+                            data.copy(
+                                runs = data.runs.copy(distanceMeters = data.runs.distanceMeters * 0.000621371)
+                            )
+                        } else {
+                            data.copy(
+                                runs = data.runs.copy(distanceMeters = data.runs.distanceMeters / 1000)
+                            )
+                        }
+                        WorkoutDetailResult.Run(converted) }
 
                 WorkoutType.HIIT -> workoutRepository.getHIITWorkout(id)
                     .map { WorkoutDetailResult.HIIT(it) }

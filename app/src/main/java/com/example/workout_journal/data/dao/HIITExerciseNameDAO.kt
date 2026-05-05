@@ -18,8 +18,10 @@ interface HIITExerciseNameDAO {
     @Query("SELECT * FROM HIITEXERCISENAMES ORDER BY name ASC")
     fun getAll(): Flow<List<HIITExerciseName>>
 
-    @Query("SELECT * FROM HIITEXERCISENAMES WHERE name LIKE :query || '%'")
-    suspend fun search(query: String): List<HIITExerciseName>
+    @Query("SELECT * FROM HIITEXERCISENAMES WHERE name LIKE :query || '%' ORDER BY name ASC")
+    fun search(query: String): Flow<List<HIITExerciseName>>
 
+    @Query("SELECT name FROM HIITEXERCISENAMES WHERE id = :id")
+    suspend fun getName(id: Int): String
 
 }

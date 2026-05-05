@@ -13,9 +13,8 @@ import javax.inject.Inject
 class WorkoutRepository @Inject constructor(
     private val workoutDAO: WorkoutDAO)
 {
-    suspend fun insertWorkout(workout: Workout) {
-        workoutDAO.insertWorkout(workout)
-    }
+    suspend fun insertWorkout(workout: Workout): Long = workoutDAO.insertWorkout(workout)
+
 
     suspend fun deleteWorkout(workout: Workout) {
         workoutDAO.deleteWorkout(workout)

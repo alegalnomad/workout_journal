@@ -29,5 +29,8 @@ sealed class Route (val path: String){
     }
 
     object Stats : Route("stats")
-    object Settings : Route("settings")
+    sealed class Settings(path: String) : Route("settings"){
+        object Home : Settings("settings/home")
+        object ExerciseSelection : Settings("settings/exercises")
+    }
  }
