@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.service)
     implementation(libs.androidx.compose.remote.creation.core)
     implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
     ksp(libs.androidx.room.compiler)
 
     // Location & Maps
