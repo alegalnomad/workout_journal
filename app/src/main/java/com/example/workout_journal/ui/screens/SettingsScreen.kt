@@ -18,11 +18,13 @@ fun SettingsScreen(
 )
 {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val selectedExercises by viewModel.exercises.collectAsStateWithLifecycle()
+    val selectedExercises by viewModel.selectedExerciseNameIds.collectAsStateWithLifecycle()
+    val allExercises by viewModel.allExercises.collectAsStateWithLifecycle()
 
     SettingsScreenContent(
         uiState = uiState,
-        exercises = selectedExercises,
+        allExercises = allExercises,
+        selectedExercises = selectedExercises,
         onMeasureUnitChange = viewModel::updateMeasureUnit,
         onUserNameChange = viewModel::updateUserName,
 
@@ -34,7 +36,7 @@ fun SettingsScreen(
 fun SettingsScreenContentPreview() {
     SettingsScreenContent(
         uiState = previewUiState,
-        exercises = previewExercises,
+        allExercises = previewExercises,
         onMeasureUnitChange = {},
         onUserNameChange = {},
 

@@ -43,11 +43,14 @@ import com.example.workout_journal.utils.toTitleCase
 @Composable
 fun SettingsScreenContent(
     uiState: SettingsUiState,
-    exercises: List<WeightExerciseName>,
+    allExercises: List<WeightExerciseName>,
+    selectedExercises: Set<Int>,
     onMeasureUnitChange: (MeasureUnit) -> Unit,
     onUserNameChange: (String) -> Unit,
 ) {
-    var currentUnit = uiState.measureUnit
+    val currentUnit = uiState.measureUnit
+
+
     LazyColumn(
         modifier = Modifier
             .padding(4.dp)
@@ -77,7 +80,7 @@ fun SettingsScreenContent(
                             onClick = {onMeasureUnitChange(MeasureUnit.METRIC)},
                             shape = CircleShape,
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (currentUnit == MeasureUnit.METRIC) Color.Green else Color.Gray,
+                                containerColor = if (currentUnit == MeasureUnit.METRIC) Color.Green else Gray,
                                 contentColor = if (currentUnit == MeasureUnit.METRIC) Color.Black else Color.Black
                             )
                             ) {
@@ -87,10 +90,10 @@ fun SettingsScreenContent(
                         Spacer(modifier = Modifier.padding(horizontal = 10.dp))
 
                         Button(
-                            onClick = {onMeasureUnitChange(MeasureUnit.METRIC)},
+                            onClick = {onMeasureUnitChange(MeasureUnit.IMPERIAL)},
                             shape = CircleShape,
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (currentUnit == MeasureUnit.IMPERIAL) Color.Green else Color.Gray,
+                                containerColor = if (currentUnit == MeasureUnit.IMPERIAL) Color.Green else Gray,
                                 contentColor = if (currentUnit == MeasureUnit.IMPERIAL) Color.Black else Color.Black
                             )
                         ) {
@@ -99,6 +102,16 @@ fun SettingsScreenContent(
                     }
                 }
             }
+        }
+
+        item {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color.DarkGray)
+            ) { }
         }
     }
 }

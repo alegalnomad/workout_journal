@@ -46,12 +46,22 @@ class SettingsViewModel @Inject constructor(
             initialValue = SettingsUiState()
         )
 
-    val exercises : StateFlow<List<WeightExerciseName>> = weightRepository.allNames
+    val allExercises : StateFlow<List<WeightExerciseName>> = weightRepository.allNames
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
+
+    private val _selectedExerciseNameIds = MutableStateFlow(emptySet<Int>())
+    val selectedExerciseNameIds: StateFlow<Set<Int>> = _selectedExerciseNameIds.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            val saved = preferencesManager.userPreferencesFlow.map { it.selectedExerciseIds }.first()
+            _selectedExerciseNameIds.value = saved
+        }
+    }
 
     fun updateMeasureUnit(unit: MeasureUnit) {
         viewModelScope.launch {
